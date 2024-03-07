@@ -13,7 +13,38 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="71dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="IP:" />
+
+            <EditText
+                android:id="@+id/ipsev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="text" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
             android:orientation="horizontal"
             android:paddingTop="10dp">
 
@@ -53,7 +84,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Numero de Palet:" />
+                android:text="Numero de Palet:"
+                android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/txtpalet"
@@ -86,7 +118,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Numero de Cajas:" />
+                android:text="Numero de Cajas:"
+                android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/txtcajas"
@@ -94,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="text"
+                android:inputType="number"
                 android:hint="@string/cajas_hint" />
 
             <Space
@@ -119,15 +152,16 @@
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Codigo:" />
+                android:text="Codigo:"
+                android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/txtcodigo"
-                android:layout_width="180dp"
+                android:layout_width="185dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="text"
+                android:inputType="none"
                 android:hint="@string/codigo_hint" />
 
             <Space
@@ -137,9 +171,70 @@
 
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="88dp">
+
+            <!-- TextView para "Cajas Repetidas" -->
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="87dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Cajas Repetidas"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- TextView para el número de "Cajas Repetidas" -->
+            <TextView
+                android:id="@+id/repetida"
+                android:layout_width="33dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                android:text="0"
+                android:textSize="24dp"
+                app:layout_constraintBottom_toBottomOf="@id/textView6"
+                app:layout_constraintStart_toEndOf="@id/textView6"
+                app:layout_constraintTop_toTopOf="@id/textView6" />
+
+            <!-- TextView para "Cajas Leídas" -->
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="109dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:text="Cajas Leídas"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/textView6"
+                app:layout_constraintEnd_toStartOf="@id/contadorTextView"
+                app:layout_constraintStart_toEndOf="@id/repetida"
+                app:layout_constraintTop_toTopOf="@id/textView6" />
+
+            <!-- TextView para el contador -->
+            <TextView
+                android:id="@+id/contadorTextView"
+                android:layout_width="43dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
+                android:text="0"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/textView6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textView7"
+                app:layout_constraintTop_toTopOf="@id/textView6" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="87dp"
+            android:layout_height="73dp"
             android:orientation="horizontal">
 
             <Space
@@ -147,50 +242,42 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
+            <!-- Botón para eliminar -->
             <ImageButton
-                android:id="@+id/addButton"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_input_add"
-                android:contentDescription="@string/add_button_description" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="67dp"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/delButton"
+                android:id="@+id/deleteButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_delete"
-                android:contentDescription="@string/delete_button_description" />
+                android:contentDescription="@string/delete_button_description"
+                android:src="@android:drawable/ic_menu_delete" />
 
             <Space
-                android:layout_width="30dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
+            <!-- Botón para dejar pendiente -->
+
+            <ImageButton
+                android:id="@+id/pendeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@android:drawable/ic_menu_recent_history" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <!-- Botón para guardar -->
             <ImageButton
                 android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_menu_save"
-                android:contentDescription="@string/save_button_description" />
+                android:contentDescription="@string/save_button_description"
+                android:src="@android:drawable/ic_menu_save" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -198,6 +285,7 @@
                 android:layout_weight="1" />
 
         </LinearLayout>
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
