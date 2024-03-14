@@ -11,6 +11,7 @@ import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Vibrator;
+import android.util.Log;
 import android.content.Context;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     int contador = 0;
     int contador_rep = 0;
     List<String> codigosValidos = new ArrayList<>();
+    String numeroPrograma = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,17 +65,28 @@ public class MainActivity extends AppCompatActivity {
                     // Si es igual, enviar al servidor un mensaje "1" por el puerto 9000
                     sendMessageToServer("1", palet, 9000);
                     contador_rep=0;
-                    contadorTextView2.setText(String.valueOf(contador_rep));
                     contador=0;
-                    contadorTextView.setText(String.valueOf(contador));
                     codigosValidos.clear();
-                    qr.setText("");
-                    n_cajas.setText("");
-                    n_palet.setText("");
-                    Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha GUARDADO", Toast.LENGTH_SHORT).show();
+                    numeroPrograma = "";
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            qr.setText("");
+                            n_cajas.setText("");
+                            n_palet.setText("");
+                            contadorTextView.setText(String.valueOf(contador));
+                            contadorTextView2.setText(String.valueOf(contador_rep));
+                            Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha GUARDADO", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     // Si no es igual, mostrar un mensaje de advertencia
-                    Toast.makeText(MainActivity.this, "Faltan cajas por contar", Toast.LENGTH_SHORT).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Faltan cajas por contar", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -93,14 +106,19 @@ public class MainActivity extends AppCompatActivity {
                                 // Cuando se hace clic en "Sí", enviar al servidor un mensaje "2" por el puerto 9000
                                 sendMessageToServer("2", palet, 9000);
                                 contador_rep=0;
-                                contadorTextView2.setText(String.valueOf(contador_rep));
                                 contador=0;
-                                contadorTextView.setText(String.valueOf(contador));
                                 codigosValidos.clear();
-                                qr.setText("");
-                                n_cajas.setText("");
-                                n_palet.setText("");
-                                Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha borrado", Toast.LENGTH_SHORT).show();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        qr.setText("");
+                                        n_cajas.setText("");
+                                        n_palet.setText("");
+                                        contadorTextView.setText(String.valueOf(contador));
+                                        contadorTextView2.setText(String.valueOf(contador_rep));
+                                        Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha borrado", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -129,14 +147,21 @@ public class MainActivity extends AppCompatActivity {
                         // Realizar la acción correspondiente al dejar pendiente el palet
                         sendMessageToServer("3", palet, 9000);
                         contador_rep=0;
-                        contadorTextView2.setText(String.valueOf(contador_rep));
-                        contador=0;
-                        contadorTextView.setText(String.valueOf(contador));
                         codigosValidos.clear();
-                        qr.setText("");
-                        n_cajas.setText("");
-                        n_palet.setText("");
-                        Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha borrado", Toast.LENGTH_SHORT).show();
+                        numeroPrograma = "";
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                qr.setText("");
+                                Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha quedado pendiente con "+ n_cajas+ " Insertadas", Toast.LENGTH_SHORT).show();
+                                n_cajas.setText("");
+                                n_palet.setText("");
+                                contadorTextView.setText(String.valueOf(contador));
+                                contador=0;
+                                contadorTextView2.setText(String.valueOf(contador_rep));
+                            }
+                        });
+
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -162,13 +187,10 @@ public class MainActivity extends AppCompatActivity {
                 // No se requiere acción mientras cambia el texto
             }
 
-            // Declarar un HashMap para almacenar los códigos QR y la cantidad de repeticiones
-            HashMap<String, Integer> qrRepetidos = new HashMap<>();
-
             @Override
             public void afterTextChanged(Editable s) {
                 // Obtener la dirección IP del servidor
-                String serverAddress = sevEditText.getText().toString();
+                String serverAddress = "192.168.0.122";
 
                 // Verificar si la dirección IP está vacía
                 if (serverAddress.isEmpty()) {
@@ -181,22 +203,30 @@ public class MainActivity extends AppCompatActivity {
                 String cajas = n_cajas.getText().toString();
                 String codigoQR = qr.getText().toString();
 
-                // Verificar si la longitud del código QR es 14
-                if (codigoQR.length() == 14) {
+                if (numeroPrograma.equals("") && codigoQR.length() == 14 ){
+                    numeroPrograma = codigoQR.substring(3, 7);
+                }
+
+
+                 if (codigoQR.length() == 14) {
                     // Verificar si el código ya existe en la lista de códigos válidos
                     String numeroProgramaActual = codigoQR.substring(3, 7);
-                    if (codigosValidos.isEmpty() || numeroProgramaActual.equals(codigosValidos.get(0).substring(3, 8))) {
+
+                    if (codigosValidos.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
                         // Verificar si el código ya existe en la lista de códigos válidos
                         if (codigosValidos.contains(codigoQR)) {
-                            qr.setText("");
-                            // Si existe, incrementar contador de repeticiones
                             contador_rep++;
-                            contadorTextView2.setText(String.valueOf(contador_rep));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    qr.setText("");
+                                    contadorTextView2.setText(String.valueOf(contador_rep));
+                                }
+                            });
                         } else {
                             // Si no existe, agregarlo a la lista de códigos válidos y aumentar contador
                             codigosValidos.add(codigoQR);
                             contador++;
-                            contadorTextView.setText(String.valueOf(contador));
 
                             // Crear un hilo para enviar los datos al servidor
                             Thread thread = new Thread(new Runnable() {
@@ -213,10 +243,16 @@ public class MainActivity extends AppCompatActivity {
                                         // Enviar los datos de palet, cajas y código QR al servidor
                                         writer.println(palet + "," + cajas + "," + codigoQR);
                                         writer.flush();
+                                        writer.close();
 
                                         // Limpiar el campo de texto de QR
-                                        qr.setText("");
-
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                qr.setText("");
+                                                contadorTextView.setText(String.valueOf(contador));
+                                            }
+                                        });
                                         // Cerrar la conexión
                                         socket.close();
                                     } catch (Exception e) {
@@ -231,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
                         // mostrar un mensaje de alerta y hacer vibrar el teléfono
                         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         if (vibrator != null) {
-                            vibrator.vibrate(1000);
+                            vibrator.vibrate(2000);
                         }
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         builder.setMessage("El número de programa no coincide con el primer número de programa registrado. ¿Desea continuar?")
@@ -239,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         qr.setText("");
+
                                     }
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -261,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
     // Función para enviar un mensaje al servidor
     private void sendMessageToServer(String message, String palet, int port) {
         // Obtener la dirección IP del servidor
-        String serverAddress = sevEditText.getText().toString();
+        String serverAddress = "192.168.0.122";
 
         // Verificar si la dirección IP está vacía
         if (serverAddress.isEmpty()) {
@@ -284,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
                     // Enviar el mensaje al servidor
                     writer.println(message + "," + palet);
                     writer.flush();
+                    writer.close();
 
                     // Cerrar la conexión
                     socket.close();
