@@ -71,7 +71,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="66dp"
+            android:layout_height="64dp"
             android:orientation="horizontal">
 
             <Space
@@ -93,14 +93,37 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="text"
-                android:hint="@string/palet_hint" />
+                android:hint="@string/palet_hint"
+                android:inputType="text" />
 
             <Space
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/verificar"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Verificar Pallet" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -139,7 +162,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="67dp"
+            android:layout_height="58dp"
             android:orientation="horizontal">
 
             <Space
@@ -161,8 +184,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="none"
-                android:hint="@string/codigo_hint" />
+                android:hint="@string/codigo_hint"
+                android:inputType="none" />
 
             <Space
                 android:layout_width="30dp"
@@ -173,20 +196,20 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="106dp"
+            android:layout_height="96dp"
             android:orientation="horizontal">
 
             <Space
-                android:layout_width="30dp"
+                android:layout_width="5dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
             <!-- TextView para "Cajas Leídas" -->
             <TextView
                 android:id="@+id/textView7"
-                android:layout_width="155dp"
+                android:layout_width="109dp"
                 android:layout_height="68dp"
                 android:layout_marginStart="8dp"
-                android:text="Cajas Leídas"
+                android:text=" Leídas"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintEnd_toStartOf="@id/contadorTextView"
@@ -196,12 +219,13 @@
             <!-- TextView para el contador -->
             <TextView
                 android:id="@+id/contadorTextView"
-                android:layout_width="56dp"
-                android:layout_height="68dp"
+                android:layout_width="154dp"
+                android:layout_height="69dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="0"
-                android:textSize="40sp"
+                android:textColor="#188F1D"
+                android:textSize="60sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -218,40 +242,43 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="69dp"
+            android:layout_height="84dp"
             android:orientation="horizontal">
 
             <Space
-                android:layout_width="30dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
             <!-- TextView para "Cajas Leídas" -->
             <!-- TextView para "Cajas Repetidas" -->
+
+            <!-- TextView para el número de "Cajas Repetidas" -->
             <TextView
                 android:id="@+id/textView6"
-                android:layout_width="87dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="8dp"
+                android:layout_width="96dp"
+                android:layout_height="59dp"
+                android:layout_marginStart="1dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="Cajas Repetidas"
-                android:textSize="16sp"
+                android:text=" Repetidas"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- TextView para el número de "Cajas Repetidas" -->
             <TextView
                 android:id="@+id/repetida"
-                android:layout_width="33dp"
-                android:layout_height="30dp"
+                android:layout_width="154dp"
+                android:layout_height="69dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:text="0"
-                android:textSize="24dp"
+                android:textColor="#F10D0D"
+                android:textColorHint="#F40404"
+                android:textSize="40sp"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintStart_toEndOf="@id/textView6"
                 app:layout_constraintTop_toTopOf="@id/textView6" />
@@ -267,7 +294,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="73dp"
+            android:layout_height="78dp"
             android:orientation="horizontal">
 
             <Space

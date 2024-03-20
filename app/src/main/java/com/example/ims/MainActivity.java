@@ -2,6 +2,7 @@ package com.example.ims;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton saveButton;
     ImageButton delButton;
     ImageButton penButton;
+    Button verificar;
     TextView contadorTextView;
     TextView contadorTextView2;
     int contador = 0;
@@ -48,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
         n_palet = findViewById(R.id.txtpalet);
         n_cajas = findViewById(R.id.txtcajas);
         qr = findViewById(R.id.txtcodigo);
+
+        cambiarEdicionEditText(false);
+
+
         sevEditText = findViewById(R.id.ipsev);
         contadorTextView = findViewById(R.id.contadorTextView);
         contadorTextView2 = findViewById(R.id.repetida);
@@ -55,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.saveButton);
         delButton = findViewById(R.id.deleteButton);
         penButton = findViewById(R.id.pendeButton);
+        verificar = findViewById(R.id.verificar);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                         codigosValidos.clear();
                         clearCSVFile();
                         numeroPrograma = "";
+                        verificar.setEnabled(true);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -82,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha GUARDADO", Toast.LENGTH_SHORT).show();
                             }
                         });
+                        cambiarEdicionEditText(false);
 
                     } else {
                         // Si no es igual, mostrar un mensaje de advertencia
@@ -114,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
                                 contador=0;
                                 codigosValidos.clear();
                                 clearCSVFile();
+                                cambiarEdicionEditText(false);
+                                verificar.setEnabled(true);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -155,6 +166,8 @@ public class MainActivity extends AppCompatActivity {
                         contador_rep=0;
                         codigosValidos.clear();
                         numeroPrograma = "";
+                        cambiarEdicionEditText(false);
+                        verificar.setEnabled(true);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -181,6 +194,84 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        verificar.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                // Obtener el número de palet desde el EditText
+                String palet = n_palet.getText().toString();
+
+                // Crear un hilo para realizar la solicitud al servidor
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // Crear un socket para conectarse al servidor en el puerto 9000
+                            Socket socket = new Socket("192.168.1.101", 9000);
+
+                            // Obtener el OutputStream para enviar datos al servidor
+                            OutputStream outputStream = socket.getOutputStream();
+                            PrintWriter writer = new PrintWriter(outputStream);
+
+                            // Enviar el mensaje al servidor (por ejemplo, "verificar,palet")
+                            String message = "verificar," + palet;
+                            writer.println(message);
+                            writer.flush();
+
+                            // Esperar la respuesta del servidor
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                            String response = reader.readLine(); // Espera bloqueante hasta recibir la respuesta
+
+                            // Manejar la respuesta del servidor en el hilo principal (UI thread)
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (response.equals("no_existe")) {
+                                        cambiarEdicionEditText(true);
+                                        verificar.setEnabled(false);
+                                        Toast.makeText(MainActivity.this, "Respuesta del servidor: " + response, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                        builder.setMessage("Este número de palet ya existe. Por favor ingrese uno nuevo.")
+                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        contador = 0;
+                                                        contador_rep = 0;
+                                                        codigosValidos.clear();
+                                                        clearCSVFile();
+                                                        n_palet.setText("");
+                                                        n_cajas.setText("");
+                                                        contadorTextView.setText(String.valueOf(contador));
+                                                        contadorTextView2.setText(String.valueOf(contador_rep));
+                                                    }
+                                                });
+                                        AlertDialog alertDialog = builder.create();
+                                        alertDialog.show();
+                                    }
+                                }
+                            });
+
+                            // Cerrar la conexión con el servidor
+                            socket.close();
+                            writer.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+
+                            // Manejar cualquier error de conexión o comunicación con el servidor en el hilo principal (UI thread)
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
+
+        });
+
+
         // Evento para manejar cambios en el EditText de QR
         qr.addTextChangedListener(new TextWatcher() {
             @Override
@@ -196,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 // Obtener la dirección IP del servidor
-                String serverAddress = "192.168.88.141";
+                String serverAddress = "192.168.1.101";
 
                 // Obtener los datos de palet, cajas y código QR
                 String palet = n_palet.getText().toString();
@@ -346,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
     // Función para enviar un mensaje al servidor
     private void sendMessageToServer(String message, String palet, int port) {
         // Obtener la dirección IP del servidor
-        String serverAddress = "192.168.88.141";
+        String serverAddress = "192.168.1.101";
 
         // Crear un hilo para enviar el mensaje al servidor
         Thread thread = new Thread(new Runnable() {
@@ -423,5 +514,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void cambiarEdicionEditText(boolean editable) {
+        // Cambiar la edición de los EditText según el valor de la variable 'editable'
+        n_cajas.setEnabled(editable);
+        qr.setEnabled(editable);
     }
 }
