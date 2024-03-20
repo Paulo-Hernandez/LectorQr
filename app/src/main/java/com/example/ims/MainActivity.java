@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                         clearCSVFile();
                         numeroPrograma = "";
                         verificar.setEnabled(true);
+                        n_palet.setEnabled(true);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -123,8 +124,10 @@ public class MainActivity extends AppCompatActivity {
                                 contador=0;
                                 codigosValidos.clear();
                                 clearCSVFile();
+                                numeroPrograma = "";
                                 cambiarEdicionEditText(false);
                                 verificar.setEnabled(true);
+                                n_palet.setEnabled(true);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -168,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         numeroPrograma = "";
                         cambiarEdicionEditText(false);
                         verificar.setEnabled(true);
+                        n_palet.setEnabled(true);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -228,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
                                     if (response.equals("no_existe")) {
                                         cambiarEdicionEditText(true);
                                         verificar.setEnabled(false);
+                                        n_palet.setEnabled(false);
                                         Toast.makeText(MainActivity.this, "Respuesta del servidor: " + response, Toast.LENGTH_SHORT).show();
                                     } else {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -339,7 +344,8 @@ public class MainActivity extends AppCompatActivity {
                     numeroPrograma = codigoQR.substring(3, 7);
                 }
 
-                // Verificar si el código QR es válido
+
+                    // Verificar si el código QR es válido
                 if (codigoQR.length() == 14) {
                     String numeroProgramaActual = codigoQR.substring(3, 7);
 
@@ -427,6 +433,25 @@ public class MainActivity extends AppCompatActivity {
                         alertDialog.show();
                     }
                 } else {
+
+                    if (codigoQR.length() > 0){
+
+                        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        if (vibrator != null) {
+                            vibrator.vibrate(2000);
+                        }
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Se ha ingresado un codigo no valido, lealo de nuevo ")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        qr.setText("");
+                                    }
+                                });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+
+                    }
 
                 }
             }
