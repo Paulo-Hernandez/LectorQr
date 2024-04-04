@@ -27,16 +27,17 @@ import android.util.Log;
 
 
 public class MainActivity extends AppCompatActivity {
-    EditText n_palet;
-    EditText n_cajas;
-    EditText qr;
+    EditText n_lote;
+    EditText codigo;
     EditText sevEditText;
     ImageButton saveButton;
     ImageButton delButton;
     ImageButton penButton;
     Button verificar;
-    TextView contadorTextView;
-    TextView contadorTextView2;
+    TextView contadorCajasLote;
+    TextView contadorKilosLote;
+    TextView contadorCajasProducto;
+    TextView contadorKilosProducto;
     int contador = 0;
     int contador_rep = 0;
     List<String> codigosValidos = new ArrayList<>();
@@ -47,21 +48,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        n_palet = findViewById(R.id.txtpalet);
-        n_cajas = findViewById(R.id.txtcajas);
-        qr = findViewById(R.id.txtcodigo);
+        n_lote = findViewById(R.id.txtpalet);
+        codigo = findViewById(R.id.qr);
 
         cambiarEdicionEditText(false);
 
 
         sevEditText = findViewById(R.id.ipsev);
-        contadorTextView = findViewById(R.id.contadorTextView);
-        contadorTextView2 = findViewById(R.id.repetida);
+        // Contador de lote
+        contadorCajasLote = findViewById(R.id.textViewCounterCajas2);
+        contadorKilosLote = findViewById(R.id.textViewCounterKilos2);
+
+        // Contador de Producto
+        contadorCajasProducto = findViewById(R.id.textViewCounterCajas4);
+        contadorKilosProducto = findViewById(R.id.textViewCounterKilos1);
         // Botones
-        saveButton = findViewById(R.id.saveButton);
-        delButton = findViewById(R.id.deleteButton);
-        penButton = findViewById(R.id.pendeButton);
-        verificar = findViewById(R.id.verificar);
+
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
