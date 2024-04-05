@@ -6,6 +6,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Switch;
+import android.widget.CompoundButton;
 import android.text.Editable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     ImageButton delButton;
     ImageButton penButton;
     Button verificar;
+
+    Switch pendiente;
     TextView contadorTextView;
     TextView contadorTextView2;
     int contador = 0;
@@ -62,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         delButton = findViewById(R.id.deleteButton);
         penButton = findViewById(R.id.pendeButton);
         verificar = findViewById(R.id.verificar);
+
+        pendiente = findViewById(R.id.Pendiente);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,11 +173,11 @@ public class MainActivity extends AppCompatActivity {
                         // Realizar la acción correspondiente al dejar pendiente el palet
                         sendMessageToServer("3", palet, 9000);
                         contador_rep=0;
-                        codigosValidos.clear();
                         numeroPrograma = "";
                         cambiarEdicionEditText(false);
                         verificar.setEnabled(true);
                         n_palet.setEnabled(true);
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -197,6 +203,26 @@ public class MainActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
+        pendiente.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Verifica si el estado del Switch ha cambiado a activado o desactivado
+                if (isChecked) {
+                    verificar.setEnabled(false);
+                    n_palet.setEnabled(false);
+                    n_cajas.setEnabled(true);
+                    qr.setEnabled(true);
+
+                } else {
+                    verificar.setEnabled(true);
+                    n_palet.setEnabled(true);
+                    n_cajas.setEnabled(false);
+                    qr.setEnabled(false);
+                }
+            }
+        });
+
 
         verificar.setOnClickListener(new View.OnClickListener(){
             @Override

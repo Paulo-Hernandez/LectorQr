@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">IMS_Paletizado</string>
     <string name="delete_button_description">Eliminar</string>
-    <string name="codigo_hint">Ingrese el código aquí</string>
-    <string name="palet_hint">Ingrese el número de palet aquí</string>
+    <string name="codigo_hint">Código aquí</string>
+    <string name="palet_hint">Palet aquí</string>
     <string name="save_button_description">Guardar</string>
-    <string name="cajas_hint">Ingrese el número de cajas aquí</string>
+    <string name="cajas_hint">Número de cajas aquí</string>
     <string name="add_button_description">Agregar</string>
     <string name="pending_button_description">Descripción del botón para dejar pendiente</string>
 
