@@ -20,6 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 import android.text.TextWatcher;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
@@ -30,18 +32,20 @@ public class MainActivity extends AppCompatActivity {
     EditText n_lote;
     EditText codigo;
     EditText sevEditText;
-    ImageButton saveButton;
-    ImageButton delButton;
-    ImageButton penButton;
-    Button verificar;
     TextView contadorCajasLote;
     TextView contadorKilosLote;
     TextView contadorCajasProducto;
     TextView contadorKilosProducto;
-    int contador = 0;
-    int contador_rep = 0;
-    List<String> codigosValidos = new ArrayList<>();
-    String numeroPrograma = "";
+
+    // contadores
+    int contador_cajas_lote = 0;
+    float contador_kilos_lote = 0;
+    int contador_cajas_producto = 0;
+    String contador_K_lote_str = "";
+
+    String peso = "";
+    String id_articulo = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         n_lote = findViewById(R.id.txtpalet);
         codigo = findViewById(R.id.qr);
+        List<String> codigosValidos = new ArrayList<>();
 
         cambiarEdicionEditText(false);
 
@@ -65,222 +70,11 @@ public class MainActivity extends AppCompatActivity {
         // Botones
 
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Cuando se hace clic en el botón "saveButton", enviar al servidor un mensaje "1" por el puerto 9000
-                String palet = n_palet.getText().toString();
 
-
-                    // Verificar si el contador es igual al número de cajas
-                    if (contador == Integer.parseInt(n_cajas.getText().toString())) {
-                        sendMessageToServer("1", palet, 9000);
-                        contador_rep=0;
-                        contador=0;
-                        codigosValidos.clear();
-                        clearCSVFile();
-                        numeroPrograma = "";
-                        verificar.setEnabled(true);
-                        n_palet.setEnabled(true);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                qr.setText("");
-                                n_cajas.setText("");
-                                n_palet.setText("");
-                                contadorTextView.setText(String.valueOf(contador));
-                                contadorTextView2.setText(String.valueOf(contador_rep));
-                                Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha GUARDADO", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        cambiarEdicionEditText(false);
-
-                    } else {
-                        // Si no es igual, mostrar un mensaje de advertencia
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "Faltan cajas por contar", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-            }
-        });
-
-        delButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Obtener el número de palet actual
-                String palet = n_palet.getText().toString();
-
-                // Mostrar un diálogo de confirmación
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("¿Está seguro de borrar el palet actual?")
-                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Cuando se hace clic en "Sí", enviar al servidor un mensaje "2" por el puerto 9000
-                                sendMessageToServer("2", palet, 9000);
-                                contador_rep=0;
-                                contador=0;
-                                codigosValidos.clear();
-                                clearCSVFile();
-                                numeroPrograma = "";
-                                cambiarEdicionEditText(false);
-                                verificar.setEnabled(true);
-                                n_palet.setEnabled(true);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        qr.setText("");
-                                        n_cajas.setText("");
-                                        n_palet.setText("");
-                                        contadorTextView.setText(String.valueOf(contador));
-                                        contadorTextView2.setText(String.valueOf(contador_rep));
-                                        Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha borrado", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Cuando se hace clic en "No", cerrar el diálogo sin realizar ninguna acción
-                                dialog.dismiss();
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
-
-        penButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                // Cuando se hace clic en el botón "penButton", enviar al servidor un mensaje "3" por el puerto 9000
-                String palet = n_palet.getText().toString();
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Confirmación");
-                builder.setMessage("¿Desea dejar pendiente el palet? Por favor dejar Marcado en que caja Llevan contada");
-                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Realizar la acción correspondiente al dejar pendiente el palet
-                        sendMessageToServer("3", palet, 9000);
-                        contador_rep=0;
-                        codigosValidos.clear();
-                        numeroPrograma = "";
-                        cambiarEdicionEditText(false);
-                        verificar.setEnabled(true);
-                        n_palet.setEnabled(true);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                qr.setText("");
-                                Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha quedado pendiente con "+ n_cajas+ " Insertadas", Toast.LENGTH_SHORT).show();
-                                n_cajas.setText("");
-                                n_palet.setText("");
-                                contadorTextView.setText(String.valueOf(contador));
-                                contador=0;
-                                contadorTextView2.setText(String.valueOf(contador_rep));
-                            }
-                        });
-
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // No hacer ningún cambio
-                    }
-                });
-                // Mostrar el cuadro de diálogo
-                builder.show();
-            }
-        });
-
-        verificar.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                // Obtener el número de palet desde el EditText
-                String palet = n_palet.getText().toString();
-
-                // Crear un hilo para realizar la solicitud al servidor
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // Crear un socket para conectarse al servidor en el puerto 9000
-                            Socket socket = new Socket("192.168.1.101", 9000);
-
-                            // Obtener el OutputStream para enviar datos al servidor
-                            OutputStream outputStream = socket.getOutputStream();
-                            PrintWriter writer = new PrintWriter(outputStream);
-
-                            // Enviar el mensaje al servidor (por ejemplo, "verificar,palet")
-                            String message = "verificar," + palet;
-                            writer.println(message);
-                            writer.flush();
-
-                            // Esperar la respuesta del servidor
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                            String response = reader.readLine(); // Espera bloqueante hasta recibir la respuesta
-
-                            // Manejar la respuesta del servidor en el hilo principal (UI thread)
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (response.equals("no_existe")) {
-                                        cambiarEdicionEditText(true);
-                                        verificar.setEnabled(false);
-                                        n_palet.setEnabled(false);
-                                        Toast.makeText(MainActivity.this, "Respuesta del servidor: " + response, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                        builder.setMessage("Este número de palet ya existe. Por favor ingrese uno nuevo.")
-                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        contador = 0;
-                                                        contador_rep = 0;
-                                                        codigosValidos.clear();
-                                                        clearCSVFile();
-                                                        n_palet.setText("");
-                                                        n_cajas.setText("");
-                                                        contadorTextView.setText(String.valueOf(contador));
-                                                        contadorTextView2.setText(String.valueOf(contador_rep));
-                                                    }
-                                                });
-                                        AlertDialog alertDialog = builder.create();
-                                        alertDialog.show();
-                                    }
-                                }
-                            });
-
-                            // Cerrar la conexión con el servidor
-                            socket.close();
-                            writer.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-
-                            // Manejar cualquier error de conexión o comunicación con el servidor en el hilo principal (UI thread)
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MainActivity.this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }
-                }).start();
-            }
-
-        });
 
 
         // Evento para manejar cambios en el EditText de QR
-        qr.addTextChangedListener(new TextWatcher() {
+        codigo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // No se requiere acción antes de que cambie el texto
@@ -297,10 +91,9 @@ public class MainActivity extends AppCompatActivity {
                 String serverAddress = "192.168.1.101";
 
                 // Obtener los datos de palet, cajas y código QR
-                String palet = n_palet.getText().toString();
-                String cajas = n_cajas.getText().toString();
-                String codigoQR = qr.getText().toString();
-                if (palet.isEmpty() || cajas.isEmpty()) {
+                String lote = n_lote.getText().toString();
+                String codigo_ean = codigo.getText().toString();
+                if (lote.isEmpty()) {
                     // Mostrar alerta de campo vacío
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage("Por favor, complete todos los campos.")
@@ -310,9 +103,8 @@ public class MainActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            qr.setText("");
-                                            n_palet.setText("Cambiar");
-                                            n_cajas.setText("999");
+                                            codigo.setText("");
+                                            n_lote.setText("Lote");
                                         }
                                     });
                                 }
@@ -321,45 +113,28 @@ public class MainActivity extends AppCompatActivity {
                     alertDialog.show();
                     return; // Salir del método para evitar más procesamiento
                 }
-                int cajas_int;
-
-                try {
-                    cajas_int = Integer.parseInt(cajas);
-                } catch (NumberFormatException e) {
-                    // Manejar el caso en que cajas no sea un número válido
-                    e.printStackTrace();
-                    // Mostrar alerta de valor no válido en cajas
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("El valor en el campo 'cajas' no es un número válido.")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // Aquí puedes realizar alguna acción si el usuario confirma
-                                }
-                            });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                    return; // Salir del método para evitar más procesamiento
-                }
-
-                if (numeroPrograma.equals("") && codigoQR.length() == 14 ){
-                    numeroPrograma = codigoQR.substring(3, 7);
-                }
 
 
                     // Verificar si el código QR es válido
-                if (codigoQR.length() == 14) {
-                    String numeroProgramaActual = codigoQR.substring(3, 7);
+                if (codigo_ean.length() == 13) {
 
-                    if (codigosValidos.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
-                        if (!codigosValidos.contains(codigoQR)) {
+                    id_articulo = codigo_ean.substring(1,7);
+                    peso = codigo_ean.substring(6,12);
+
+
+                    if (codigosValidos.isEmpty()) {
+                        if (!codigosValidos.contains(codigo_ean)) {
                             // Agregar el código QR a la lista de códigos válidos y aumentar el contador
-                            codigosValidos.add(codigoQR);
-                            contador++;
+                            codigosValidos.add(codigo_ean);
+                            contador_cajas_lote++;
+                            contador_kilos_lote = contador_kilos_lote + Float.parseFloat(peso);
+
                         }
                         else{
-                            contador_rep++;
+
                         }
+                        DecimalFormat df = new DecimalFormat("#.##");
+                        contador_K_lote_str = df.format(contador_kilos_lote);
 
                         // Crear un archivo CSV temporal
                         try {
@@ -368,9 +143,7 @@ public class MainActivity extends AppCompatActivity {
                             // Escribir los datos en el archivo CSV
                             FileWriter writer = new FileWriter(tempFile);
                             for (String codigo : codigosValidos) {
-                                writer.append(palet);
-                                writer.append(",");
-                                writer.append(cajas);
+                                writer.append(lote);
                                 writer.append(",");
                                 writer.append(codigo);
                                 writer.append("\n"); // Agrega un salto de línea
@@ -387,16 +160,16 @@ public class MainActivity extends AppCompatActivity {
                             }
                             reader.close();
 
-                            if(contador == cajas_int){
-                                sendFileToServer(tempFile,serverAddress);
-                            }
+
+                            sendFileToServer(tempFile,serverAddress);
+
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    qr.setText("");
-                                    contadorTextView.setText(String.valueOf(contador));
-                                    contadorTextView2.setText(String.valueOf(contador_rep));
+                                    codigo.setText("");
+                                    contadorCajasLote.setText(String.valueOf(contador_cajas_lote));
+                                    contadorKilosLote.setText(String.valueOf(contador_K_lote_str));
                                 }
                             });
                         } catch (IOException e) {
@@ -418,9 +191,7 @@ public class MainActivity extends AppCompatActivity {
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                qr.setText("");
-                                                contadorTextView.setText(String.valueOf(contador));
-                                                contadorTextView2.setText(String.valueOf(contador_rep));
+
                                             }
                                         });
                                     }
@@ -436,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else {
 
-                    if (codigoQR.length() > 0){
+                    if (codigo_ean.length() > 0){
 
                         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         if (vibrator != null) {
@@ -447,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        qr.setText("");
+                                        codigo.setText("");
                                     }
                                 });
                         AlertDialog alertDialog = builder.create();
@@ -544,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void cambiarEdicionEditText(boolean editable) {
         // Cambiar la edición de los EditText según el valor de la variable 'editable'
-        n_cajas.setEnabled(editable);
-        qr.setEnabled(editable);
+
     }
 }
