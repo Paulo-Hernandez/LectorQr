@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     TextView contadorKilosLote;
     TextView contadorCajasProducto;
     TextView contadorKilosProducto;
-
+    ImageButton save;
+    ImageButton del;
     // contadores
     int contador_cajas_lote = 0;
     float contador_kilos_lote = 0;
@@ -56,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
         codigo = findViewById(R.id.qr);
         List<String> codigosValidos = new ArrayList<>();
 
-        cambiarEdicionEditText(false);
-
 
         sevEditText = findViewById(R.id.ipsev);
         // Contador de lote
@@ -68,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         contadorCajasProducto = findViewById(R.id.textViewCounterCajas4);
         contadorKilosProducto = findViewById(R.id.textViewCounterKilos1);
         // Botones
+        save = findViewById(R.id.savebuttom);
+        del = findViewById(R.id.delbuttom);
 
 
 
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 // Obtener la dirección IP del servidor
-                String serverAddress = "192.168.1.101";
+                String serverAddress = "192.168.0.126";
 
                 // Obtener los datos de palet, cajas y código QR
                 String lote = n_lote.getText().toString();
@@ -161,8 +162,6 @@ public class MainActivity extends AppCompatActivity {
                             reader.close();
 
 
-                            sendFileToServer(tempFile,serverAddress);
-
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -175,35 +174,6 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else {
-                        // Si el número de programa no coincide con el primer número de programa registrado,
-                        // mostrar un mensaje de alerta y hacer vibrar el teléfono
-                        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        if (vibrator != null) {
-                            vibrator.vibrate(2000);
-                        }
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setMessage("El número de programa no coincide con el primer número de programa registrado. ¿Desea continuar?")
-                                .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-                                            }
-                                        });
-                                    }
-                                })
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // Aquí puedes realizar alguna acción si el usuario no confirma
-                                    }
-                                });
-                        AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
                     }
                 } else {
 
@@ -312,9 +282,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    public void cambiarEdicionEditText(boolean editable) {
-        // Cambiar la edición de los EditText según el valor de la variable 'editable'
-
     }
 }
