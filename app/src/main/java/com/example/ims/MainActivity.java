@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Vibrator;
 import android.content.Context;
+import android.content.Intent;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.File;
@@ -27,6 +28,9 @@ import java.util.List;
 import java.io.*;
 import android.util.Log;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 
 public class MainActivity extends AppCompatActivity {
     EditText n_palet;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton saveButton;
     ImageButton delButton;
     ImageButton penButton;
+    ImageButton configButton;
     Button verificar;
 
     Switch pendiente;
@@ -43,8 +48,16 @@ public class MainActivity extends AppCompatActivity {
     TextView contadorTextView2;
     int contador = 0;
     int contador_rep = 0;
+    int largo_pen = 0;
     List<String> codigosValidos = new ArrayList<>();
+    List<lecturavalida> codigosValidos1 = new ArrayList<>();
     String numeroPrograma = "";
+    boolean switchpen = false;
+
+
+    private static final String CONFIG_FILE_NAME = "config.txt";
+    private static final String DEFAULT_IP = "192.168.1.101";
+    private String serverIp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +79,28 @@ public class MainActivity extends AppCompatActivity {
         delButton = findViewById(R.id.deleteButton);
         penButton = findViewById(R.id.pendeButton);
         verificar = findViewById(R.id.verificar);
+        configButton = findViewById(R.id.config_button);
 
         pendiente = findViewById(R.id.Pendiente);
+
+        // Verificar si el archivo de configuración existe
+        File configFile = new File(getFilesDir(), CONFIG_FILE_NAME);
+
+        if (!configFile.exists()) {
+            // Si el archivo no existe, crearlo con la IP predeterminada
+            createConfigFile(DEFAULT_IP);
+        }
+
+        configButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Crear un Intent para abrir la ConfigActivity
+                Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
+                // Iniciar la ConfigActivity
+                startActivity(intent);
+            }
+        });
+
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                         contador_rep=0;
                         contador=0;
                         codigosValidos.clear();
+                        codigosValidos1.removeIf(lectura -> lectura.getPalet().equals(palet));
                         clearCSVFile();
                         numeroPrograma = "";
                         verificar.setEnabled(true);
@@ -129,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                                 contador_rep=0;
                                 contador=0;
                                 codigosValidos.clear();
+                                codigosValidos1.removeIf(lectura -> lectura.getPalet().equals(palet));
                                 clearCSVFile();
                                 numeroPrograma = "";
                                 cambiarEdicionEditText(false);
@@ -177,16 +212,25 @@ public class MainActivity extends AppCompatActivity {
                         cambiarEdicionEditText(false);
                         verificar.setEnabled(true);
                         n_palet.setEnabled(true);
+                        String paletParaBuscar = palet;
+
+                        for (lecturavalida lectura : codigosValidos1) {
+                            if (lectura.getPalet().equals(paletParaBuscar)) {
+                                largo_pen++;
+                            }
+                        }
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 qr.setText("");
-                                Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha quedado pendiente con "+ n_cajas+ " Insertadas", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha quedado pendiente con "+ String.valueOf(largo_pen)+ " guardadas en este dispositivo", Toast.LENGTH_SHORT).show();
                                 n_cajas.setText("");
                                 n_palet.setText("");
+                                contador = 0;
+                                contador_rep = 0;
+                                largo_pen = 0;
                                 contadorTextView.setText(String.valueOf(contador));
-                                contador=0;
                                 contadorTextView2.setText(String.valueOf(contador_rep));
                             }
                         });
@@ -213,6 +257,30 @@ public class MainActivity extends AppCompatActivity {
                     n_palet.setEnabled(false);
                     n_cajas.setEnabled(true);
                     qr.setEnabled(true);
+                    switchpen = true;
+                    int cantidad_pendientes = 0;
+                    final String[] caja = {""};
+                    String paletBuscado = n_palet.getText().toString();
+
+                    for (lecturavalida lectura : codigosValidos1) {
+                        if (lectura.getPalet().equals(paletBuscado)) {
+                            cantidad_pendientes++;
+                            caja[0] = lectura.getCajas();
+                        }
+                    }
+
+                    contador = cantidad_pendientes;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            qr.setText("");
+                            n_cajas.setText(caja[0]);
+                            n_palet.setText(paletBuscado);
+                            contadorTextView.setText(String.valueOf(contador));
+                            contadorTextView2.setText(String.valueOf(contador_rep));
+                        }
+                    });
 
                 } else {
                     verificar.setEnabled(true);
@@ -236,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             // Crear un socket para conectarse al servidor en el puerto 9000
-                            Socket socket = new Socket("192.168.1.101", 9000);
+                            Socket socket = new Socket(readConfigFile(), 9000);
 
                             // Obtener el OutputStream para enviar datos al servidor
                             OutputStream outputStream = socket.getOutputStream();
@@ -318,13 +386,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 // Obtener la dirección IP del servidor
-                String serverAddress = "192.168.1.101";
+                String serverAddress = readConfigFile();
 
                 // Obtener los datos de palet, cajas y código QR
                 String palet = n_palet.getText().toString();
                 String cajas = n_cajas.getText().toString();
                 String codigoQR = qr.getText().toString();
-                if (palet.isEmpty() || cajas.isEmpty()) {
+                if ((palet.isEmpty() || cajas.isEmpty()) && switchpen == false) {
                     // Mostrar alerta de campo vacío
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage("Por favor, complete todos los campos.")
@@ -366,24 +434,39 @@ public class MainActivity extends AppCompatActivity {
                     return; // Salir del método para evitar más procesamiento
                 }
 
-                if (numeroPrograma.equals("") && codigoQR.length() == 14 ){
-                    numeroPrograma = codigoQR.substring(3, 7);
+                if (numeroPrograma.equals("") && codigoQR.length() == 12 ){
+                    numeroPrograma = codigoQR.substring(7, 11);
                 }
 
 
                     // Verificar si el código QR es válido
-                if (codigoQR.length() == 14) {
-                    String numeroProgramaActual = codigoQR.substring(3, 7);
-
-                    if (codigosValidos.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
-                        if (!codigosValidos.contains(codigoQR)) {
-                            // Agregar el código QR a la lista de códigos válidos y aumentar el contador
-                            codigosValidos.add(codigoQR);
+                if (codigoQR.length() == 12) {
+                    String numeroProgramaActual = codigoQR.substring(7, 11);
+                    boolean rep = false;
+                    if (codigosValidos1.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
+                        if(codigosValidos1.size() == 0){
+                            codigosValidos1.add(new lecturavalida(codigoQR,palet,cajas));
                             contador++;
                         }
                         else{
-                            contador_rep++;
+                            for(lecturavalida lectura: codigosValidos1){
+                                if(lectura.getCodigo().equals(codigoQR)){
+                                    rep = true;
+                                    break;
+                                }
+                                else{
+                                    rep = false;
+                                }
+                            }
+                            if(rep==false){
+                                codigosValidos1.add(new lecturavalida(codigoQR,palet,cajas));
+                                contador++;
+                            }
+                            else{
+                                contador_rep++;
+                            }
                         }
+
 
                         // Crear un archivo CSV temporal
                         try {
@@ -391,13 +474,15 @@ public class MainActivity extends AppCompatActivity {
 
                             // Escribir los datos en el archivo CSV
                             FileWriter writer = new FileWriter(tempFile);
-                            for (String codigo : codigosValidos) {
-                                writer.append(palet);
-                                writer.append(",");
-                                writer.append(cajas);
-                                writer.append(",");
-                                writer.append(codigo);
-                                writer.append("\n"); // Agrega un salto de línea
+                            for (lecturavalida lectura : codigosValidos1) {
+                                if(lectura.getPalet().equals(palet)){
+                                    writer.append(lectura.getPalet());
+                                    writer.append(",");
+                                    writer.append(String.valueOf(contador));
+                                    writer.append(",");
+                                    writer.append(lectura.getCodigo());
+                                    writer.append("\n"); // Agrega un salto de línea
+                                }
                             }
                             writer.flush();
                             writer.close();
@@ -488,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
     // Función para enviar un mensaje al servidor
     private void sendMessageToServer(String message, String palet, int port) {
         // Obtener la dirección IP del servidor
-        String serverAddress = "192.168.1.101";
+        String serverAddress = readConfigFile();
 
         // Crear un hilo para enviar el mensaje al servidor
         Thread thread = new Thread(new Runnable() {
@@ -571,4 +656,41 @@ public class MainActivity extends AppCompatActivity {
         n_cajas.setEnabled(editable);
         qr.setEnabled(editable);
     }
+
+    private void createConfigFile(String ip) {
+        String content = "ip=" + ip;
+        try (FileOutputStream fos = openFileOutput(CONFIG_FILE_NAME, Context.MODE_PRIVATE)) {
+            fos.write(content.getBytes());
+            Toast.makeText(this, "Archivo de configuración creado con IP predeterminada", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al crear el archivo de configuración", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private String readConfigFile() {
+        StringBuilder configContent = new StringBuilder();
+        try (FileInputStream fis = openFileInput(CONFIG_FILE_NAME)) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                configContent.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al leer el archivo de configuración", Toast.LENGTH_SHORT).show();
+        }
+
+        // Parsear el contenido para obtener la IP
+        String[] configParts = configContent.toString().split("=");
+        if (configParts.length == 2 && "ip".equals(configParts[0])) {
+            return configParts[1];
+        } else {
+            Toast.makeText(this, "Formato del archivo de configuración inválido", Toast.LENGTH_SHORT).show();
+            return DEFAULT_IP; // Reemplaza con la IP predeterminada que desees
+        }
+    }
+
+
 }
