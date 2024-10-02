@@ -543,9 +543,9 @@ public class MainActivity extends AppCompatActivity {
                         AlertDialog alertDialog = builder.create();
                         alertDialog.show();
                     }
-                } else {
+                } /*else {
 
-                    if (codigoQR.length() > 0){
+                    if ( codigoQR.length() > 1 && codigoQR.length() < 12){
 
                         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         if (vibrator != null) {
@@ -564,7 +564,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
-                }
+                }*/
             }
 
 

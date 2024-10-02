@@ -44,7 +44,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="76dp"
+            android:layout_height="50dp"
             android:orientation="horizontal"
             android:paddingTop="10dp">
 
@@ -60,8 +60,20 @@
                 android:layout_weight="1"
                 android:text="IMS Lector"
                 android:textAlignment="center"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/config_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@android:drawable/ic_menu_manage" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -71,7 +83,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="57dp"
             android:orientation="horizontal">
 
             <Space
@@ -84,12 +96,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Numero de Palet:"
+                android:text="N° Palet"
                 android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/txtpalet"
-                android:layout_width="185dp"
+                android:layout_width="164dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
@@ -105,7 +117,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="59dp"
             android:orientation="horizontal">
 
             <Space
@@ -140,7 +152,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="56dp"
             android:orientation="horizontal">
 
             <Space
@@ -153,7 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Numero de Cajas:"
+                android:text="N° Cajas"
                 android:textSize="16dp" />
 
             <EditText
@@ -174,7 +186,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="58dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Space
@@ -208,7 +220,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Space
@@ -237,7 +249,7 @@
                 android:gravity="center"
                 android:text="0"
                 android:textColor="#188F1D"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -254,7 +266,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="84dp"
+            android:layout_height="70dp"
             android:orientation="horizontal">
 
             <Space
@@ -281,8 +293,8 @@
 
             <TextView
                 android:id="@+id/repetida"
-                android:layout_width="154dp"
-                android:layout_height="69dp"
+                android:layout_width="128dp"
+                android:layout_height="55dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
@@ -290,7 +302,7 @@
                 android:text="0"
                 android:textColor="#F10D0D"
                 android:textColorHint="#F40404"
-                android:textSize="40sp"
+                android:textSize="30sp"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintStart_toEndOf="@id/textView6"
                 app:layout_constraintTop_toTopOf="@id/textView6" />
@@ -366,18 +378,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal">
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/config_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_menu_manage" />
 
             <Space
                 android:layout_width="wrap_content"
