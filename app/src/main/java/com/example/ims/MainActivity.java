@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     List<lecturavalida> codigosValidos1 = new ArrayList<>();
     String numeroPrograma = "";
     boolean switchpen = false;
+    boolean eliminado = false;
 
 
     private static final String CONFIG_FILE_NAME = "config.txt";
@@ -162,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Obtener el número de palet actual
                 String palet = n_palet.getText().toString();
+
+                eliminado = true;
 
                 // Mostrar un diálogo de confirmación
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -403,25 +406,32 @@ public class MainActivity extends AppCompatActivity {
                 String palet = n_palet.getText().toString();
                 String cajas = n_cajas.getText().toString();
                 String codigoQR = qr.getText().toString();
-                if ((palet.isEmpty() || cajas.isEmpty()) && switchpen == false) {
-                    // Mostrar alerta de campo vacío
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Por favor, complete todos los campos.")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            qr.setText("");
-                                            n_palet.setText("Cambiar");
-                                            n_cajas.setText("999");
-                                        }
-                                    });
-                                }
-                            });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
+                if ((palet.isEmpty() || cajas.isEmpty()) && !switchpen) {
+
+                    if(!eliminado){
+                        // Mostrar alerta de campo vacío
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Por favor, complete todos los campos.")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                qr.setText("");
+                                                n_palet.setText("Cambiar");
+                                                n_cajas.setText("999");
+                                            }
+                                        });
+                                    }
+                                });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                    else {
+                        eliminado = false;
+                    }
+
                     return; // Salir del método para evitar más procesamiento
                 }
                 int cajas_int;
