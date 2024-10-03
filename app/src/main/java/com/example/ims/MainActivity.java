@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_IP = "192.168.1.101";
     private String serverIp;
 
+    private File tempFile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +107,15 @@ public class MainActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String serverAddress = readConfigFile();
+                String cajas = n_cajas.getText().toString();
+                int cajas_int=Integer.parseInt(cajas);
+
+                if(contador == cajas_int){
+                    sendFileToServer(tempFile,serverAddress);
+                }
+
                 // Cuando se hace clic en el botón "saveButton", enviar al servidor un mensaje "1" por el puerto 9000
                 String palet = n_palet.getText().toString();
 
@@ -470,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Crear un archivo CSV temporal
                         try {
-                            File tempFile = File.createTempFile("data", ".csv");
+                            tempFile = File.createTempFile("data", ".csv");
 
                             // Escribir los datos en el archivo CSV
                             FileWriter writer = new FileWriter(tempFile);
@@ -495,10 +506,6 @@ public class MainActivity extends AppCompatActivity {
                                 csvContent.append(line).append("\n");
                             }
                             reader.close();
-
-                            if(contador == cajas_int){
-                                sendFileToServer(tempFile,serverAddress);
-                            }
 
                             runOnUiThread(new Runnable() {
                                 @Override
