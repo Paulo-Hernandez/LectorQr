@@ -6,7 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="368dp"
+        android:layout_height="623dp"
+        android:alpha="0.2"
+        android:foregroundGravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout2"
+        app:srcCompat="@drawable/ingmetricalogo_removebg_preview"
+        tools:visibility="visible" />
+
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -44,7 +58,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="76dp"
+            android:layout_height="56dp"
             android:orientation="horizontal"
             android:paddingTop="10dp">
 
@@ -84,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Numero de Palet:"
+                android:text="N° Palet"
                 android:textSize="16dp" />
 
             <EditText
@@ -118,7 +132,7 @@
                 android:layout_width="126dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Verificar Pallet" />
+                android:text="Verificar" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -130,7 +144,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Pendiente" />
+                android:text="Pendiente"
+                android:textSize="16sp" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -140,7 +155,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="61dp"
             android:orientation="horizontal">
 
             <Space
@@ -153,12 +168,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Numero de Cajas:"
+                android:text="N° Cajas"
                 android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/txtcajas"
-                android:layout_width="185dp"
+                android:layout_width="162dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
@@ -174,7 +189,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="58dp"
+            android:layout_height="68dp"
             android:orientation="horizontal">
 
             <Space
@@ -184,7 +199,7 @@
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="110dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Codigo:"
@@ -192,7 +207,7 @@
 
             <EditText
                 android:id="@+id/txtcodigo"
-                android:layout_width="185dp"
+                android:layout_width="163dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
@@ -208,7 +223,31 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="41dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Switch
+                android:id="@+id/mixto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Palet Mixto"
+                android:textSize="16sp" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
             android:orientation="horizontal">
 
             <Space
@@ -231,13 +270,13 @@
             <!-- TextView para el contador -->
             <TextView
                 android:id="@+id/contadorTextView"
-                android:layout_width="154dp"
-                android:layout_height="69dp"
+                android:layout_width="138dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="0"
                 android:textColor="#188F1D"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -254,7 +293,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="84dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Space
@@ -281,8 +320,8 @@
 
             <TextView
                 android:id="@+id/repetida"
-                android:layout_width="154dp"
-                android:layout_height="69dp"
+                android:layout_width="139dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
@@ -290,7 +329,7 @@
                 android:text="0"
                 android:textColor="#F10D0D"
                 android:textColorHint="#F40404"
-                android:textSize="40sp"
+                android:textSize="35sp"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintStart_toEndOf="@id/textView6"
                 app:layout_constraintTop_toTopOf="@id/textView6" />
@@ -317,8 +356,8 @@
             <!-- Botón para eliminar -->
             <ImageButton
                 android:id="@+id/deleteButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="65sp"
+                android:layout_height="55sp"
                 android:layout_weight="1"
                 android:backgroundTint="#92E91111"
                 android:contentDescription="@string/delete_button_description"
@@ -333,8 +372,8 @@
 
             <ImageButton
                 android:id="@+id/pendeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="65sp"
+                android:layout_height="55sp"
                 android:layout_weight="1"
                 android:backgroundTint="#BEFFEB3B"
                 android:src="@android:drawable/ic_menu_recent_history" />
@@ -347,8 +386,8 @@
             <!-- Botón para guardar -->
             <ImageButton
                 android:id="@+id/saveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="65sp"
+                android:layout_height="55sp"
                 android:layout_weight="1"
                 android:backgroundTint="#DF55D033"
                 android:contentDescription="@string/save_button_description"
@@ -374,7 +413,7 @@
 
             <ImageButton
                 android:id="@+id/config_button"
-                android:layout_width="wrap_content"
+                android:layout_width="40sp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_menu_manage" />

@@ -15,27 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="117dp"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:id="@+id/ing"
-                android:layout_width="15dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/images_removebg_preview" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="81dp"
             android:orientation="horizontal">
 
             <Space
@@ -51,7 +31,7 @@
                 android:layout_weight="1"
                 android:foregroundGravity="center"
                 android:gravity="center"
-                android:text="Bienvenido a IMS Lector"
+                android:text="Bienvenido a IMS Palet"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -63,7 +43,25 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="285dp"
+            android:layout_height="42dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foregroundGravity="center"
+                android:gravity="center"
+                android:text="Presione el logo para comenzar"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="323dp"
             android:orientation="horizontal">
 
             <Space
@@ -73,8 +71,8 @@
 
             <ImageView
                 android:id="@+id/welcome"
-                android:layout_width="346dp"
-                android:layout_height="306dp"
+                android:layout_width="335dp"
+                android:layout_height="281dp"
                 android:layout_weight="1"
                 app:srcCompat="@drawable/iconazul_removebg_preview" />
 
@@ -82,6 +80,49 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="47dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foregroundGravity="center"
+                android:gravity="center"
+                android:text="Creado por"
+                android:textSize="18sp"
+                android:textStyle="italic" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="159dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/ing"
+                android:layout_width="55dp"
+                android:layout_height="128dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/images_removebg_preview" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
         </LinearLayout>
 
     </LinearLayout>

@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.CompoundButton;
 import android.text.Editable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -21,15 +22,25 @@ import java.io.PrintWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.Socket;
 import android.text.TextWatcher;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,8 +55,14 @@ public class MainActivity extends AppCompatActivity {
     Button verificar;
 
     Switch pendiente;
+    Switch mixto;
     TextView contadorTextView;
     TextView contadorTextView2;
+
+    private final String expirationDate = "07/10/2025";
+    private static final String TAG = "MainActivity";
+
+
     int contador = 0;
     int contador_rep = 0;
     int largo_pen = 0;
@@ -53,12 +70,14 @@ public class MainActivity extends AppCompatActivity {
     List<lecturavalida> codigosValidos1 = new ArrayList<>();
     String numeroPrograma = "";
     boolean switchpen = false;
+    boolean switchmixto = false;
+    boolean original_state_mixto;
     boolean eliminado = false;
 
 
     private static final String CONFIG_FILE_NAME = "config.txt";
     private static final String DEFAULT_IP = "192.168.1.101";
-    private String serverIp;
+
 
     private File tempFile;
 
@@ -67,16 +86,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Obtener la hora actual desde la API
+        fetchCurrentTimeFromAPI();
+
+        // inputs
         n_palet = findViewById(R.id.txtpalet);
         n_cajas = findViewById(R.id.txtcajas);
         qr = findViewById(R.id.txtcodigo);
 
-        cambiarEdicionEditText(false);
-
-
+        //Textos
         sevEditText = findViewById(R.id.ipsev);
         contadorTextView = findViewById(R.id.contadorTextView);
         contadorTextView2 = findViewById(R.id.repetida);
+
         // Botones
         saveButton = findViewById(R.id.saveButton);
         delButton = findViewById(R.id.deleteButton);
@@ -84,7 +106,14 @@ public class MainActivity extends AppCompatActivity {
         verificar = findViewById(R.id.verificar);
         configButton = findViewById(R.id.config_button);
 
+        // Switch
         pendiente = findViewById(R.id.Pendiente);
+        mixto = findViewById(R.id.mixto);
+
+        // Guardar el estado original del Switch al iniciar la actividad
+        original_state_mixto = mixto.isChecked();
+
+        cambiarEdicionEditText(false);
 
         // Verificar si el archivo de configuración existe
         File configFile = new File(getFilesDir(), CONFIG_FILE_NAME);
@@ -104,18 +133,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        // Funcionalidad boton Guardar
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String serverAddress = readConfigFile();
-                String cajas = n_cajas.getText().toString();
-                int cajas_int=Integer.parseInt(cajas);
-
-                if(contador == cajas_int){
-                    sendFileToServer(tempFile,serverAddress);
-                }
 
                 // Cuando se hace clic en el botón "saveButton", enviar al servidor un mensaje "1" por el puerto 9000
                 String palet = n_palet.getText().toString();
@@ -140,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
                                 n_palet.setText("");
                                 contadorTextView.setText(String.valueOf(contador));
                                 contadorTextView2.setText(String.valueOf(contador_rep));
+                                pendiente.setChecked(false);
+                                mixto.setChecked(false);
                                 Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha GUARDADO", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -158,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Funcionalidad Boton eliminar
         delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
                                         n_palet.setText("");
                                         contadorTextView.setText(String.valueOf(contador));
                                         contadorTextView2.setText(String.valueOf(contador_rep));
+                                        pendiente.setChecked(false);
+                                        mixto.setChecked(false);
                                         Toast.makeText(MainActivity.this, "El palet con número " + palet + " se ha borrado", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -208,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // funcionalidad boton Pendientes
         penButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -244,6 +271,8 @@ public class MainActivity extends AppCompatActivity {
                                 contador = 0;
                                 contador_rep = 0;
                                 largo_pen = 0;
+                                pendiente.setChecked(false);
+                                mixto.setChecked(false);
                                 contadorTextView.setText(String.valueOf(contador));
                                 contadorTextView2.setText(String.valueOf(contador_rep));
                             }
@@ -271,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
                     n_palet.setEnabled(false);
                     n_cajas.setEnabled(true);
                     qr.setEnabled(true);
+                    mixto.setEnabled(true);
                     switchpen = true;
                     int cantidad_pendientes = 0;
                     final String[] caja = {""};
@@ -291,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
                             qr.setText("");
                             n_cajas.setText(caja[0]);
                             n_palet.setText(paletBuscado);
+                            mixto.setChecked(false);
                             contadorTextView.setText(String.valueOf(contador));
                             contadorTextView2.setText(String.valueOf(contador_rep));
                         }
@@ -301,6 +332,19 @@ public class MainActivity extends AppCompatActivity {
                     n_palet.setEnabled(true);
                     n_cajas.setEnabled(false);
                     qr.setEnabled(false);
+                }
+            }
+        });
+
+        mixto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Verifica si el estado del Switch ha cambiado a activado o desactivado
+                if (isChecked) {
+                    switchmixto = true;
+
+                } else {
+                    switchmixto = false;
                 }
             }
         });
@@ -406,6 +450,7 @@ public class MainActivity extends AppCompatActivity {
                 String palet = n_palet.getText().toString();
                 String cajas = n_cajas.getText().toString();
                 String codigoQR = qr.getText().toString();
+                boolean rep = false;
                 if ((palet.isEmpty() || cajas.isEmpty()) && !switchpen) {
 
                     if(!eliminado){
@@ -463,103 +508,52 @@ public class MainActivity extends AppCompatActivity {
                     // Verificar si el código QR es válido
                 if (codigoQR.length() == 12) {
                     String numeroProgramaActual = codigoQR.substring(7, 11);
-                    boolean rep = false;
-                    if (codigosValidos1.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
-                        if(codigosValidos1.size() == 0){
-                            codigosValidos1.add(new lecturavalida(codigoQR,palet,cajas));
+                    if (switchmixto || codigosValidos1.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
+                        // Verificar si el código QR ya existe
+                        rep = false;
+                        for (lecturavalida lectura : codigosValidos1) {
+                            if (lectura.getCodigo().equals(codigoQR)) {
+                                rep = true;
+                                break;  // Romper el bucle si se encuentra coincidencia
+                            }
+                        }
+
+                        if (!rep) {  // Si no hay repetido, agrega el código
+                            codigosValidos1.add(new lecturavalida(codigoQR, palet, cajas));
                             contador++;
-                        }
-                        else{
-                            for(lecturavalida lectura: codigosValidos1){
-                                if(lectura.getCodigo().equals(codigoQR)){
-                                    rep = true;
-                                    break;
-                                }
-                                else{
-                                    rep = false;
-                                }
-                            }
-                            if(rep==false){
-                                codigosValidos1.add(new lecturavalida(codigoQR,palet,cajas));
-                                contador++;
-                            }
-                            else{
-                                contador_rep++;
-                            }
+                        } else {
+                            contador_rep++;
                         }
 
-
-                        // Crear un archivo CSV temporal
+                        // Crear el archivo CSV temporal
                         try {
                             tempFile = File.createTempFile("data", ".csv");
+                            escribirArchivoCSV(codigosValidos1, tempFile, palet, contador);
 
-                            // Escribir los datos en el archivo CSV
-                            FileWriter writer = new FileWriter(tempFile);
-                            for (lecturavalida lectura : codigosValidos1) {
-                                if(lectura.getPalet().equals(palet)){
-                                    writer.append(lectura.getPalet());
-                                    writer.append(",");
-                                    writer.append(String.valueOf(contador));
-                                    writer.append(",");
-                                    writer.append(lectura.getCodigo());
-                                    writer.append("\n"); // Agrega un salto de línea
-                                }
+                            // Leer y mostrar el contenido del archivo CSV
+                            String csvContent = leerArchivoCSV(tempFile);
+                            System.out.println(csvContent); // Si necesitas ver el contenido en el log
+
+                            // Verificar si se alcanzó el número de cajas
+                            if (contador == cajas_int) {
+                                sendFileToServer(tempFile, serverAddress);
                             }
-                            writer.flush();
-                            writer.close();
 
-                            // Leer el contenido del archivo CSV y mostrarlo por log
-                            BufferedReader reader = new BufferedReader(new FileReader(tempFile));
-                            StringBuilder csvContent = new StringBuilder();
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                csvContent.append(line).append("\n");
-                            }
-                            reader.close();
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    qr.setText("");
-                                    contadorTextView.setText(String.valueOf(contador));
-                                    contadorTextView2.setText(String.valueOf(contador_rep));
-                                }
+                            // Actualizar la UI en el hilo principal
+                            runOnUiThread(() -> {
+                                qr.setText("");
+                                contadorTextView.setText(String.valueOf(contador));
+                                contadorTextView2.setText(String.valueOf(contador_rep));
                             });
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else {
-                        // Si el número de programa no coincide con el primer número de programa registrado,
-                        // mostrar un mensaje de alerta y hacer vibrar el teléfono
-                        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        if (vibrator != null) {
-                            vibrator.vibrate(2000);
-                        }
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setMessage("El número de programa no coincide con el primer número de programa registrado. ¿Desea continuar?")
-                                .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                qr.setText("");
-                                                contadorTextView.setText(String.valueOf(contador));
-                                                contadorTextView2.setText(String.valueOf(contador_rep));
-                                            }
-                                        });
-                                    }
-                                })
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // Aquí puedes realizar alguna acción si el usuario no confirma
-                                    }
-                                });
-                        AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
+                    } else {
+                        mostrarAlertaProgramaNoCoincide();
                     }
+
+
                 } else {
 
                     if (codigoQR.length() > 0){
@@ -672,20 +666,21 @@ public class MainActivity extends AppCompatActivity {
         // Cambiar la edición de los EditText según el valor de la variable 'editable'
         n_cajas.setEnabled(editable);
         qr.setEnabled(editable);
+        mixto.setEnabled(editable);
     }
 
+    // Método para crear un archivo de configuración
     private void createConfigFile(String ip) {
         String content = "ip=" + ip;
         try (FileOutputStream fos = openFileOutput(CONFIG_FILE_NAME, Context.MODE_PRIVATE)) {
             fos.write(content.getBytes());
-            Toast.makeText(this, "Archivo de configuración creado con IP predeterminada", Toast.LENGTH_SHORT).show();
+            Log.i("MAIN", "Archivo de configuración creado con IP predeterminada: " + ip);
         } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error al crear el archivo de configuración", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error al crear el archivo de configuración", e);
         }
     }
 
-
+    // Método para leer el archivo de configuración
     private String readConfigFile() {
         StringBuilder configContent = new StringBuilder();
         try (FileInputStream fis = openFileInput(CONFIG_FILE_NAME)) {
@@ -694,20 +689,167 @@ public class MainActivity extends AppCompatActivity {
             while ((line = reader.readLine()) != null) {
                 configContent.append(line);
             }
+            Log.i(TAG, "Archivo de configuración leído correctamente");
         } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error al leer el archivo de configuración", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error al leer el archivo de configuración", e);
         }
 
         // Parsear el contenido para obtener la IP
         String[] configParts = configContent.toString().split("=");
         if (configParts.length == 2 && "ip".equals(configParts[0])) {
+            Log.d(TAG, "IP obtenida del archivo de configuración: " + configParts[1]);
             return configParts[1];
         } else {
-            Toast.makeText(this, "Formato del archivo de configuración inválido", Toast.LENGTH_SHORT).show();
+            Log.w(TAG, "Formato del archivo de configuración inválido, usando IP predeterminada");
             return DEFAULT_IP; // Reemplaza con la IP predeterminada que desees
         }
     }
 
+    // Método para escribir el archivo CSV
+    private void escribirArchivoCSV(List<lecturavalida> codigosValidos1, File tempFile, String palet, int contador) throws IOException {
+        FileWriter writer = new FileWriter(tempFile);
+        for (lecturavalida lectura : codigosValidos1) {
+            if (lectura.getPalet().equals(palet)) {
+                writer.append(lectura.getPalet())
+                        .append(",")
+                        .append(String.valueOf(contador))
+                        .append(",")
+                        .append(lectura.getCodigo())
+                        .append("\n");
+            }
+        }
+        writer.flush();
+        writer.close();
+        Log.i(TAG, "Archivo CSV escrito correctamente");
+    }
 
+    // Método para leer el contenido del archivo CSV
+    private String leerArchivoCSV(File tempFile) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(tempFile));
+        StringBuilder csvContent = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            csvContent.append(line).append("\n");
+        }
+        reader.close();
+        Log.i(TAG, "Contenido del archivo CSV leído correctamente");
+        return csvContent.toString();
+    }
+
+    // Método para mostrar la alerta cuando los programas no coinciden
+    private void mostrarAlertaProgramaNoCoincide() {
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            vibrator.vibrate(2000);
+            Log.d(TAG, "Vibración activada durante 2000ms");
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("El número de programa no coincide con el primer número de programa registrado. ¿Desea continuar?")
+                .setPositiveButton("Sí", (dialog, which) -> runOnUiThread(() -> {
+                    qr.setText("");
+                    contadorTextView.setText(String.valueOf(contador));
+                    contadorTextView2.setText(String.valueOf(contador_rep));
+                    Log.d(TAG, "Usuario seleccionó 'Sí' en la alerta de programas no coincidentes");
+                }))
+                .setNegativeButton("No", (dialog, which) -> Log.d(TAG, "Usuario seleccionó 'No' en la alerta de programas no coincidentes"))
+                .show();
+    }
+    private void fetchCurrentTimeFromAPI() {
+        String url = "https://worldtimeapi.org/api/timezone/Etc/UTC"; // Cambiar a HTTPS
+
+        // Realizar la solicitud HTTP en un hilo separado
+        new Thread(() -> {
+            try {
+                URL apiUrl = new URL(url);
+                HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+
+                if (connection.getResponseCode() == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+
+                    // Analizar el JSON de respuesta para obtener la fecha y hora actual
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String dateTime = jsonObject.getString("datetime");
+                    // Ejemplo: "2024-10-04T19:13:11.708762+00:00"
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ", Locale.getDefault());
+                    Date currentDate = dateFormat.parse(dateTime);
+
+                    // Verificar si la suscripción ha expirado
+                    runOnUiThread(() -> {
+                        isSubscriptionExpired(currentDate);
+                    });
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error al obtener la hora de la API", e);
+                runOnUiThread(() -> {
+                    showAlert("Error", "Error al obtener la hora de la API");
+                });
+            }
+        }).start();
+    }
+
+
+
+    // Método para verificar si la suscripción ha expirado
+    private boolean isSubscriptionExpired(Date currentDate) {
+        // Formato de la fecha para analizar la fecha de expiración
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        try {
+            // Convertir la fecha de expiración de String a Date
+            Date expiration = dateFormat.parse(expirationDate);
+
+            // Comparar la fecha actual con la fecha de expiración
+            boolean expired = currentDate.after(expiration);
+
+            // Calcular la diferencia en milisegundos
+            long differenceInMillis = expiration.getTime() - currentDate.getTime();
+            long differenceInDays = TimeUnit.DAYS.convert(differenceInMillis, TimeUnit.MILLISECONDS);
+
+            if (expired) {
+                Log.w(TAG, "La suscripción ha expirado");
+                // Muestra un alert dialog si la suscripción ha expirado
+                showAlert("Suscripción Expirada", "La suscripción ha expirado.");
+            } else {
+                Log.d(TAG, "La suscripción está vigente");
+                // Mostrar mensaje si quedan 60 días o menos
+                if (differenceInDays <= 60) {
+                    String message = "Quedan " + differenceInDays + " días para la expiración.";
+                    Log.d(TAG, message);
+                    // Muestra un alert dialog si quedan 60 días o menos
+                    showAlert_fecha("Aviso de Expiración", message);
+                }
+            }
+            return expired;
+        } catch (ParseException e) {
+            Log.e(TAG, "Error al analizar la fecha de expiración", e);
+            return false; // En caso de error al analizar la fecha, retornamos falso
+        }
+    }
+
+    private void showAlert(String title2, String message2) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title2);
+        builder.setMessage(message2);
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", (dialog, which) -> finish()); // Cerrar la aplicación al hacer clic en OK
+        builder.show();
+    }
+
+    private void showAlert_fecha(String title2, String message2) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title2);
+        builder.setMessage(message2);
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss()); // Cerrar el diálogo al hacer clic en OK
+        builder.show();
+    }
 }
