@@ -8,16 +8,10 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="368dp"
-        android:layout_height="623dp"
+        android:layout_width="407dp"
+        android:layout_height="465dp"
         android:alpha="0.2"
-        android:foregroundGravity="center"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout2"
-        app:srcCompat="@drawable/ingmetricalogo_removebg_preview"
-        tools:visibility="visible" />
+        app:srcCompat="@drawable/ingmetricalogo_removebg_preview" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -81,6 +75,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/config_button"
+                android:layout_width="40sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@android:drawable/ic_menu_manage" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -119,7 +125,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Space
@@ -129,8 +135,8 @@
 
             <Button
                 android:id="@+id/verificar"
-                android:layout_width="126dp"
-                android:layout_height="match_parent"
+                android:layout_width="115dp"
+                android:layout_height="38dp"
                 android:layout_weight="1"
                 android:text="Verificar" />
 
@@ -189,7 +195,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="68dp"
+            android:layout_height="62dp"
             android:orientation="horizontal">
 
             <Space
@@ -198,32 +204,47 @@
                 android:layout_weight="1" />
 
             <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
+                android:id="@+id/textView11"
+                android:layout_width="57dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Codigo:"
-                android:textSize="16dp" />
+                android:text="Eml" />
 
             <EditText
-                android:id="@+id/txtcodigo"
-                android:layout_width="163dp"
+                android:id="@+id/embalador"
+                android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="@string/codigo_hint"
-                android:inputType="none" />
+                android:hint="@string/embalador_hint" />
 
             <Space
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="53dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cod"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/txtcodigo"
+                android:layout_width="179dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/codigo_hint"
+                android:inputType="none" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="41dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Space
@@ -247,7 +268,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="78dp"
+            android:layout_height="56dp"
             android:orientation="horizontal">
 
             <Space
@@ -392,31 +413,6 @@
                 android:backgroundTint="#DF55D033"
                 android:contentDescription="@string/save_button_description"
                 android:src="@android:drawable/ic_menu_save" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/config_button"
-                android:layout_width="40sp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_menu_manage" />
 
             <Space
                 android:layout_width="wrap_content"

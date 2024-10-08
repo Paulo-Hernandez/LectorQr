@@ -2,6 +2,7 @@
     <string name="app_name">IMS Palet</string>
     <string name="delete_button_description">Eliminar</string>
     <string name="codigo_hint">Código aquí</string>
+    <string name="embalador_hint">Emablador</string>
     <string name="palet_hint">Palet aquí</string>
     <string name="save_button_description">Guardar</string>
     <string name="cajas_hint">N° de cajas aquí</string>

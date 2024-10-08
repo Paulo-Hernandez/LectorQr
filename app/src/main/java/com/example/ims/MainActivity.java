@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     EditText n_palet;
     EditText n_cajas;
     EditText qr;
+    EditText embal;
     EditText sevEditText;
     ImageButton saveButton;
     ImageButton delButton;
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         n_palet = findViewById(R.id.txtpalet);
         n_cajas = findViewById(R.id.txtcajas);
         qr = findViewById(R.id.txtcodigo);
+        embal = findViewById(R.id.embalador);
 
         //Textos
         sevEditText = findViewById(R.id.ipsev);
@@ -428,6 +430,23 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        embal.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                qr.requestFocus();
+            }
+        });
+
 
         // Evento para manejar cambios en el EditText de QR
         qr.addTextChangedListener(new TextWatcher() {
@@ -450,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
                 String palet = n_palet.getText().toString();
                 String cajas = n_cajas.getText().toString();
                 String codigoQR = qr.getText().toString();
+                String embalador = embal.getText().toString();
                 boolean rep = false;
                 if ((palet.isEmpty() || cajas.isEmpty()) && !switchpen) {
 
@@ -519,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (!rep) {  // Si no hay repetido, agrega el código
-                            codigosValidos1.add(new lecturavalida(codigoQR, palet, cajas));
+                            codigosValidos1.add(new lecturavalida(codigoQR, palet, cajas,embalador));
                             contador++;
                         } else {
                             contador_rep++;
@@ -542,8 +562,10 @@ public class MainActivity extends AppCompatActivity {
                             // Actualizar la UI en el hilo principal
                             runOnUiThread(() -> {
                                 qr.setText("");
+                                embal.setText("");
                                 contadorTextView.setText(String.valueOf(contador));
                                 contadorTextView2.setText(String.valueOf(contador_rep));
+                                embal.requestFocus();
                             });
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -715,6 +737,8 @@ public class MainActivity extends AppCompatActivity {
                         .append(String.valueOf(contador))
                         .append(",")
                         .append(lectura.getCodigo())
+                        .append(",")
+                        .append(lectura.getEmbalador())
                         .append("\n");
             }
         }

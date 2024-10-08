@@ -4,12 +4,14 @@ public class lecturavalida {
     private String codigo;
     private String palet;
     private String cajas;
+    private String embalador;
 
     // Constructor
-    public lecturavalida(String codigo, String palet,String caja) {
+    public lecturavalida(String codigo, String palet,String caja, String emablador) {
         this.codigo = codigo;
         this.palet = palet;
         this.cajas = caja;
+        this.embalador = emablador;
     }
 
     // Getters
@@ -25,6 +27,10 @@ public class lecturavalida {
         return cajas;
     }
 
+    public String getEmbalador() {
+        return embalador;
+    }
+
     // Setters
     public void setCodigo(String codigo) {
         this.codigo = codigo;
@@ -36,6 +42,10 @@ public class lecturavalida {
 
     public void setCajas(String caja) {
         this.cajas = caja;
+    }
+
+    public void setEmbalador(String embalador) {
+        this.embalador = embalador;
     }
 
     // Optional: Override toString for easy printing
