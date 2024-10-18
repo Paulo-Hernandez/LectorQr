@@ -536,7 +536,22 @@ public class MainActivity extends AppCompatActivity {
 
                             // Verificar si se alcanzó el número de cajas
                             if (contador == cajas_int) {
+                                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                if (vibrator != null) {
+                                    vibrator.vibrate(2000);
+                                }
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                builder.setMessage("has leito todo :D ")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                qr.setText("");
+                                            }
+                                        });
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
                                 sendFileToServer(tempFile, serverAddress);
+                                qr.setEnabled(false);
                             }
 
                             // Actualizar la UI en el hilo principal
@@ -789,9 +804,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error al obtener la hora de la API", e);
-                runOnUiThread(() -> {
+                /*runOnUiThread(() -> {
                     showAlert("Error", "Error al obtener la hora de la API");
-                });
+                });*/
             }
         }).start();
     }
