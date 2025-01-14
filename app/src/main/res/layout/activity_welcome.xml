@@ -15,7 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="81dp"
+            android:layout_height="71dp"
             android:orientation="horizontal">
 
             <Space
@@ -61,7 +61,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="323dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Space
@@ -71,8 +71,8 @@
 
             <ImageView
                 android:id="@+id/welcome"
-                android:layout_width="335dp"
-                android:layout_height="281dp"
+                android:layout_width="wrap_content"
+                android:layout_height="241dp"
                 android:layout_weight="1"
                 app:srcCompat="@drawable/iconazul_removebg_preview" />
 
@@ -102,18 +102,13 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="159dp"
+            android:layout_height="113dp"
             android:orientation="horizontal">
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/ing"
-                android:layout_width="55dp"
-                android:layout_height="128dp"
+                android:layout_width="59dp"
+                android:layout_height="83dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 app:srcCompat="@drawable/images_removebg_preview" />

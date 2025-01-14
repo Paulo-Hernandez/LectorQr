@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     TextView contadorTextView;
     TextView contadorTextView2;
 
-    private final String expirationDate = "07/10/2025";
+    private final String expirationDate = "31/12/2025";
     private static final String TAG = "MainActivity";
 
 
@@ -500,14 +500,14 @@ public class MainActivity extends AppCompatActivity {
                     return; // Salir del método para evitar más procesamiento
                 }
 
-                if (numeroPrograma.equals("") && codigoQR.length() == 12 ){
-                    numeroPrograma = codigoQR.substring(7, 11);
+                if (numeroPrograma.equals("") && codigoQR.length() == 14 ){
+                    numeroPrograma = codigoQR.substring(4, 8);
                 }
 
 
                     // Verificar si el código QR es válido
-                if (codigoQR.length() == 12) {
-                    String numeroProgramaActual = codigoQR.substring(7, 11);
+                if (codigoQR.length() == 14) {
+                    String numeroProgramaActual = codigoQR.substring(4, 8);
                     if (switchmixto || codigosValidos1.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
                         // Verificar si el código QR ya existe
                         rep = false;

@@ -10,7 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="368dp"
         android:layout_height="623dp"
-        android:alpha="0.2"
+        android:alpha="0.1"
         android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -189,7 +189,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="68dp"
+            android:layout_height="57dp"
             android:orientation="horizontal">
 
             <Space
@@ -247,7 +247,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="78dp"
+            android:layout_height="56dp"
             android:orientation="horizontal">
 
             <Space
@@ -276,7 +276,7 @@
                 android:gravity="center"
                 android:text="0"
                 android:textColor="#188F1D"
-                android:textSize="50sp"
+                android:textSize="34sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -293,7 +293,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
             <Space
@@ -329,7 +329,7 @@
                 android:text="0"
                 android:textColor="#F10D0D"
                 android:textColorHint="#F40404"
-                android:textSize="35sp"
+                android:textSize="28sp"
                 app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintStart_toEndOf="@id/textView6"
                 app:layout_constraintTop_toTopOf="@id/textView6" />
