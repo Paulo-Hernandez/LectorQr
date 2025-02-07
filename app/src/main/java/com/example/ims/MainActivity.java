@@ -301,7 +301,10 @@ public class MainActivity extends AppCompatActivity {
                     n_cajas.setEnabled(true);
                     qr.setEnabled(true);
                     mixto.setEnabled(true);
+                    saveButton.setEnabled(true);
+                    penButton.setEnabled(true);
                     switchpen = true;
+
                     int cantidad_pendientes = 0;
                     final String[] caja = {""};
                     String paletBuscado = n_palet.getText().toString();
@@ -414,6 +417,8 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
 
+                            Log.e("Server error",e.toString());
+
                             // Manejar cualquier error de conexión o comunicación con el servidor en el hilo principal (UI thread)
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -443,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // Obtener la dirección IP del servidor
+
                 String serverAddress = readConfigFile();
 
                 // Obtener los datos de palet, cajas y código QR
@@ -454,24 +459,7 @@ public class MainActivity extends AppCompatActivity {
                 if ((palet.isEmpty() || cajas.isEmpty()) && !switchpen) {
 
                     if(!eliminado){
-                        // Mostrar alerta de campo vacío
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setMessage("Por favor, complete todos los campos.")
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                qr.setText("");
-                                                n_palet.setText("Cambiar");
-                                                n_cajas.setText("999");
-                                            }
-                                        });
-                                    }
-                                });
-                        AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
+                        return;
                     }
                     else {
                         eliminado = false;
@@ -500,19 +488,27 @@ public class MainActivity extends AppCompatActivity {
                     return; // Salir del método para evitar más procesamiento
                 }
 
-                if (numeroPrograma.equals("") && codigoQR.length() == 14 ){
-                    numeroPrograma = codigoQR.substring(4, 8);
+                if(codigoQR.length() == 12){
+                    Log.e("Codigo de 12", codigoQR);
+                    codigoQR = "0" + codigoQR;
+                    Log.e("Codigo actualizado", codigoQR);
+                }
+
+                if (numeroPrograma.equals("") && codigoQR.length() == 13 ){
+                    numeroPrograma = codigoQR.substring(6, 10);
+                    Log.e("Programa primero", numeroPrograma);
                 }
 
 
                     // Verificar si el código QR es válido
-                if (codigoQR.length() == 14) {
-                    String numeroProgramaActual = codigoQR.substring(4, 8);
+                if (codigoQR.length() == 13) {
+                    String numeroProgramaActual = codigoQR.substring(6, 10);
+                    Log.e("Programa",numeroProgramaActual);
                     if (switchmixto || codigosValidos1.isEmpty() || numeroPrograma.equals(numeroProgramaActual)) {
                         // Verificar si el código QR ya existe
                         rep = false;
                         for (lecturavalida lectura : codigosValidos1) {
-                            if (lectura.getCodigo().equals(codigoQR)) {
+                            if (lectura.getCodigo().equals(codigoQR) && lectura.getPalet().equals(palet)) {
                                 rep = true;
                                 break;  // Romper el bucle si se encuentra coincidencia
                             }
@@ -682,6 +678,8 @@ public class MainActivity extends AppCompatActivity {
         n_cajas.setEnabled(editable);
         qr.setEnabled(editable);
         mixto.setEnabled(editable);
+        saveButton.setEnabled(editable);
+        penButton.setEnabled(editable);
     }
 
     // Método para crear un archivo de configuración
